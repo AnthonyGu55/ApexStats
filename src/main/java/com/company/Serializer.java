@@ -11,14 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Serializer {
-    FileWriter fw;
-
-    public void serialize(Game_Entry game_entry) throws IOException {
-        XStream xStream = new XStream(new StaxDriver());
-        String xml = xStream.toXML(game_entry);
-        fw.write(xml);
-
-    }
 
     public void serializeArrayList(List <Game_Entry> game_entries) throws IOException {
 

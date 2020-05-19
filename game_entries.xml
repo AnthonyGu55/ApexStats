@@ -1,1 +1,6 @@
-<Game_Entry><hero_name>c</hero_name><damage>3</damage><kills>3</kills><position>3</position></Game_Entry>
+<Game_Entry>
+    <hero_name>Mirage</hero_name>
+    <damage>1231</damage>
+    <kills>1</kills>
+    <position>19</position>
+</Game_Entry>
