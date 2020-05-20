@@ -1,27 +1,31 @@
 package com.company;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.StaxDriver;
+import com.google.gson.Gson;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Serializer {
 
-    public void serializeArrayList(List <Game_Entry> game_entries) throws IOException {
-
-        for(Game_Entry x:game_entries){
-            ObjectMapper mapper = new XmlMapper();
-            mapper.writeValue(new File("C:\\Users\\Antoni\\Programming\\IdeaProjects\\ApexStats\\game_entries.xml"), x);
+    public void arrayToJson(ArrayList <Game_Entry> game_entries) throws IOException {
+        FileWriter fw = new FileWriter(new File("C:\\Users\\Antoni\\Programming\\IdeaProjects\\ApexStats\\game_entries.json"));
+        fw.write(toJson(game_entries));
+        fw.close();
+    }
+    public String toJson(ArrayList<Game_Entry> game_entries){
+        Gson gson = new Gson();
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for(Game_Entry g:game_entries){
+            sb.append(gson.toJson(g));
+            sb.append(",");
         }
+        sb.deleteCharAt(sb.lastIndexOf(sb.toString()));
+        sb.append("]");
+        return sb.toString();
     }
 
-    public Game_Entry deserialize(String xml){
-        XStream xStream = new XStream();
-        return (Game_Entry) xStream.fromXML(xml);
-    }
 }

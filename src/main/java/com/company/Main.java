@@ -2,16 +2,16 @@ package com.company;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.FileWriter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Main extends JFrame{
-    public Main() throws IOException {
-        final List <Game_Entry> game_entries = new ArrayList<Game_Entry>();
+    public Main() {
+        final ArrayList <Game_Entry> game_entries = new ArrayList<Game_Entry>();
         final JFrame frame = this;
 
         GUIPanel panel = new GUIPanel();
@@ -29,18 +29,24 @@ public class Main extends JFrame{
 
                 game_entries.add(new Game_Entry(hero_name, damage, kills, position));
                 for(Game_Entry x:game_entries){
-                    System.out.println(x.getHero_name());
+                    System.out.println(x);
                 }
 
+            }
+        });
+        addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
                 try {
-                    serializer.serializeArrayList(game_entries);
-
+                    serializer.arrayToJson(game_entries);
                 }
-                catch (IOException e) {
-                    e.printStackTrace();
+                catch (IOException ex) {
+                    ex.printStackTrace();
                 }
-
-
+                System.out.println("Closed");
+                e.getWindow().dispose();
             }
         });
 
