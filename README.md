@@ -1,8 +1,2 @@
 # ApexStats
 An app to track your Apex Stats by inputting game statistic after each match. After every game you input a name of the hero you played, the damage you dealt, how many kills you got and on which position you and your team finished the game, then you press the "Save" button to  save the match data. 
-
-Here is how the app looks like:
-
-
-![That's how the game looks like](https://lh3.googleusercontent.com/PcliWXEvt9Uw7l39oScvsGe8HnLkfLyddtqD1PVeWs8cUsMX47God25dolbvAfVaOnJbwR_qIIEYKoXrtrCcpT3dMTx3t2-JqabZ6VQJP9-bc8Nfwe_0DXLYUB3WB7oZAJ1gLSOqFyILW4o3_zaokeszIrLTFo9dcZzOMi3SbqiD3yRvw0sgTlQ-W5k9ZD4T8YwvJDDrZQ2mm6gKKtwBXnuW62SszzukGoYebu6IC9L5aNBuRjNdWNHZxlJHtZeAzgZkMNs6Za50pUloR54uGDSJw_QLeGIi3J17tjotG4hN0QkwAlcV7inyZdKLosurM81CidqGw1mGbktvmVtYRhRGh1JytP9YMsDdQm9c7RUH_8ic92HgHtzUHwpEZLlV4orDTJBwQwSf8P4cIrHPRtiMPKHFDM9OGU3UeItIsu1tB9zGnNe9mFrTgbSaPA26iG7ITvYaFHn7fLN_PgQatRskYkRoU-NzNkCPliusnM6iSMCy59MmaJjq4t01jp-a9jJUHcNqTfzeIutrRfK9rI3JmFFUIXRM6kSz88EJrPE5bDEJqAh2CKgFGu7AB9Wsl2hdxvPp8KqrxHiTGP4wjFVNnKkCRGqh5ooni64H-_McQ4D7ia4MKziER-AYObnLfCdjaHh9UQK6D2Pbz8RLvJySPJYpTKZnKdPSAC3ZbJOrTrQBlZebMhoqZccw=w450-h87-no?authuser=0)
-
