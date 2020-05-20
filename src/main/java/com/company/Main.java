@@ -10,19 +10,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main extends JFrame{
+    public String[] heroes = new String[]{"Bangalore", "Bloodhound", "Caustic", "Crypto", "Gibraltar", "Lifeline", "Loba", "Mirage",
+    "Octane", "Pathfinder", "Revenant", "Watson", "Wraith"};
     public Main() {
-        final ArrayList <Game_Entry> game_entries = new ArrayList<Game_Entry>();
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        final ArrayList <Game_Entry> game_entries = new ArrayList <>();
         final JFrame frame = this;
+        final CSVSaver saver = new CSVSaver();
 
         GUIPanel panel = new GUIPanel();
-
-        final Serializer serializer = new Serializer();
 
         JButton button = new JButton("Save");
 
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                String hero_name = panel.getHero_name_field().getText();
+                String hero_name = panel.getHero_name_box().getName();
                 int damage = Integer.parseInt(panel.getDamage_field().getText());
                 int kills = Integer.parseInt(panel.getKills_field().getText());
                 int position = Integer.parseInt(panel.getPosition_field().getText());
@@ -40,7 +46,7 @@ public class Main extends JFrame{
             public void windowClosing(WindowEvent e)
             {
                 try {
-                    serializer.arrayToJson(game_entries);
+                    saver.WriteArrayToFile(game_entries, "C:\\Users\\Antoni\\Programming\\IdeaProjects\\ApexStats\\game_entries.csv");
                 }
                 catch (IOException ex) {
                     ex.printStackTrace();
@@ -56,17 +62,17 @@ public class Main extends JFrame{
         this.setVisible(true);
         this.pack();
         this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(3);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
 public class GUIPanel extends JPanel{
-    private final JTextField hero_name_field;
+    private final JComboBox hero_name_box;
     private final JTextField damage_field;
     private final JTextField kills_field;
     private final JTextField position_field;
 
-    public JTextField getHero_name_field() {
-        return hero_name_field;
+    public JComboBox getHero_name_box() {
+        return hero_name_box;
     }
 
     public JTextField getDamage_field() {
@@ -84,10 +90,10 @@ public class GUIPanel extends JPanel{
     public GUIPanel() {
 
         JLabel hero_name_label = new JLabel("Hero Name");
-        hero_name_field = new JTextField(10);
+        hero_name_box = new JComboBox(heroes);
 
         add(hero_name_label);
-        add(hero_name_field);
+        add(hero_name_box);
 
         JLabel damage_label= new JLabel("Damage");
         damage_field = new JTextField(5);
@@ -109,7 +115,7 @@ public class GUIPanel extends JPanel{
     }
 
 }
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         new Main();
 
     }
