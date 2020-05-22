@@ -18,56 +18,66 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class Main extends Application implements EventHandler<ActionEvent> {
+public class Main extends Application implements EventHandler <ActionEvent> {
 
-    Stage                 window;
+    Stage window;
 
     CSVHandler csvHandler;
 
-    ArrayList<Game_Entry> game_entries;
+    ArrayList <Game_Entry> main_game_entries;
 
     Button saveButton;
-    Button readButton;
+    Button displayButton;
+    Button removeButton;
 
     public DataInputLayout dataInputLayout;
+
+    public TableStage tableStage;
 
     public String[] heroes = new String[]{"Bangalore", "Bloodhound", "Caustic", "Crypto", "Gibraltar",
             "Lifeline", "Loba", "Mirage", "Octane", "Pathfinder", "Revenant", "Watson", "Wraith"};
 
+    public static final String CSV_FILE_PATH = "C:\\Users\\Antoni\\Programming\\IdeaProjects\\ApexStats\\game_entries.csv";
+
     @Override
-    public void start (Stage stage){
-        csvHandler   = new CSVHandler();
-        game_entries = csvHandler.readFromCSV();
-        window       = new Stage();
+    public void start (Stage stage) {
+        csvHandler        = new CSVHandler();
+        main_game_entries = csvHandler.readFromCSV();
+        window            = new Stage();
+        tableStage   = new TableStage();
 
         //Data input layout
         dataInputLayout = new DataInputLayout(10);
-        dataInputLayout.setPadding(new Insets(10,20,20,20));
+        dataInputLayout.setPadding(new Insets(10, 20, 20, 20));
 
         //Save Button
         saveButton = new Button("Save");
         saveButton.setOnAction(this);
 
-        //Read Button
-        readButton = new Button("Read");
-        readButton.setOnAction(this);
+        //Display button
+        displayButton = new Button("Display data");
+        displayButton.setOnAction(this);
+
+        //Remove button
+        removeButton = new Button("Remove last entry");
+        removeButton.setOnAction(this);
 
         //Layout
-        HBox pane = new HBox(10);
-        pane.setPadding(new Insets(20,20,20,20));
-        pane.getChildren().addAll(saveButton, readButton);
+        HBox hBox = new HBox(10);
+        hBox.setPadding(new Insets(20, 20, 20, 20));
+        hBox.getChildren().addAll(saveButton, displayButton, removeButton);
 
         BorderPane border_layout = new BorderPane();
-        border_layout.setBottom(pane);
+        border_layout.setBottom(hBox);
         border_layout.setCenter(dataInputLayout);
 
         //Window settings
-        window.setOnCloseRequest(e ->{
+        window.setOnCloseRequest(e -> {
             e.consume();
             closeProgram();
         });
 
-        Scene scene = new Scene(border_layout,800, 110);
+        Scene scene = new Scene(border_layout, 800, 110);
         window.setScene(scene);
         window.show();
 
@@ -78,25 +88,49 @@ public class Main extends Application implements EventHandler<ActionEvent> {
     @Override
     public void handle (ActionEvent actionEvent) {
 
-        if(actionEvent.getSource() == saveButton){
+        if (actionEvent.getSource() == saveButton) {
             saveToArray(actionEvent);
+            tableStage.refreshTable();
         }
-        if(actionEvent.getSource() == readButton){
-            readFromCSV();
+
+        if (actionEvent.getSource() == displayButton) {
+            tableStage.display(main_game_entries);
+        }
+
+        if (actionEvent.getSource() == removeButton) {
+            try {
+                removeLastItem();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void removeLastItem () throws IOException {
+
+        Game_Entry tmpgame_Entry = main_game_entries.get(main_game_entries.size()-1);
+
+        boolean answer = ConfirmBox.display("Remove last entry", "Are you sure you want to remove this entry?\n\tHero: " + tmpgame_Entry.getHero_name() + "\n\tDamage: " + tmpgame_Entry.getDamage() + "\n\tKills: " + tmpgame_Entry.getKills() + "\n\tPosition: " + tmpgame_Entry.getPosition());
+
+        if(answer){
+            main_game_entries.remove(main_game_entries.size() - 1);
+            csvHandler.eraseLast();
         }
     }
 
     private void saveToArray (ActionEvent actionEvent) {
         String hero_name = dataInputLayout.getHero_name_box().getValue();
         try {
-            int damage = Integer.parseInt(dataInputLayout.getDamage_field().getText());
-            int kills = Integer.parseInt(dataInputLayout.getKills_field().getText());
+            int damage   = Integer.parseInt(dataInputLayout.getDamage_field().getText());
+            int kills    = Integer.parseInt(dataInputLayout.getKills_field().getText());
             int position = Integer.parseInt(dataInputLayout.getPosition_field().getText());
 
             boolean answer = ConfirmBox.display("New Entry", "Are you sure you want to add this entry?\n\tHero: " + hero_name + "\n\tDamage: " + damage + "\n\tKills: " + kills + "\n\tPosition: " + position);
             if (answer) {
                 Game_Entry tmpGame_Entry = new Game_Entry(hero_name, damage, kills, position);
-                game_entries.add(tmpGame_Entry);
+                main_game_entries.add(tmpGame_Entry);
 
                 dataInputLayout.getDamage_field().setText("");
                 dataInputLayout.getKills_field().setText("");
@@ -112,25 +146,15 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         }
     }
 
-    private void readFromCSV(){
-        if(game_entries.isEmpty())
-            game_entries = csvHandler.readFromCSV();
-
-        for(Game_Entry g:game_entries){
-            System.out.println(g);
-        }
-
-    }
-
-    private void closeProgram (){
+    private void closeProgram () {
         window.close();
     }
 
     public class DataInputLayout extends HBox {
-        private final ChoiceBox<String> hero_name_box ;
-        private final TextField damage_field;
-        private final TextField kills_field;
-        private final TextField position_field;
+        private final ChoiceBox <String> hero_name_box;
+        private final TextField          damage_field;
+        private final TextField          kills_field;
+        private final TextField          position_field;
 
         public ChoiceBox <String> getHero_name_box () {
             return hero_name_box;
@@ -148,18 +172,18 @@ public class Main extends Application implements EventHandler<ActionEvent> {
             return position_field;
         }
 
-        public DataInputLayout (int spacing){
+        public DataInputLayout (int spacing) {
             super(spacing);
             System.out.println("dataInput layout created");
             Label hero_name_label = new Label("Hero");
             hero_name_box = new ChoiceBox <>();
             addArray(hero_name_box, heroes);
             hero_name_box.setValue("Mirage");
-            this.getChildren().addAll(hero_name_label,hero_name_box);
+            this.getChildren().addAll(hero_name_label, hero_name_box);
 
             Label damage_label = new Label("Damage");
             damage_field = new TextField();
-            this.getChildren().addAll(damage_label,damage_field);
+            this.getChildren().addAll(damage_label, damage_field);
 
             Label kills_label = new Label("Kills");
             kills_field = new TextField();
@@ -172,15 +196,15 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
         }
 
-        public void addArray(ChoiceBox<String> hero_name_box, String[] heroes){
-            for(String s:heroes){
+        public void addArray (ChoiceBox <String> hero_name_box, String[] heroes) {
+            for (String s : heroes) {
                 hero_name_box.getItems().add(s);
             }
         }
 
     }
 
-    public static void main(String[] args) {
+    public static void main (String[] args) {
         launch(args);
     }
 }

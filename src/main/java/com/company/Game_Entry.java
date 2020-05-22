@@ -15,14 +15,6 @@ public class Game_Entry {
         this.position  = position;
     }
 
-    /*public static int getId () {*/
-    /*    return id;*/
-    /*}*/
-/**/
-    /*public static void setId (int id) {*/
-    /*    Game_Entry.id = id;*/
-    /*}*/
-
     public String getHero_name() {
         return hero_name;
     }

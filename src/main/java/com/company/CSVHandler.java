@@ -51,4 +51,18 @@ public class CSVHandler {
         System.out.println("reading");
         return game_entries;
     }
+
+    public void eraseLast() throws IOException {
+        RandomAccessFile f = new RandomAccessFile(Main.CSV_FILE_PATH, "rw");
+        long length = f.length() - 1;
+        byte b;
+        do {
+            length -= 1;
+            f.seek(length);
+            b = f.readByte();
+        } while(b != 10);
+        f.setLength(length+1);
+        f.close();
+
+    }
 }
