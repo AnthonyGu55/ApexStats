@@ -1,17 +1,27 @@
 package com.company;
 
 public class Game_Entry {
-    private String hero_name = "";
+    /*private static int id;*/
+    private String hero_name;
     private int damage;
     private int kills;
     private int position;
 
     public Game_Entry(String hero_name, int damage, int kills, int position) {
+        /*this.id = id++;*/
         this.hero_name = hero_name;
         this.damage    = damage;
         this.kills     = kills;
         this.position  = position;
     }
+
+    /*public static int getId () {*/
+    /*    return id;*/
+    /*}*/
+/**/
+    /*public static void setId (int id) {*/
+    /*    Game_Entry.id = id;*/
+    /*}*/
 
     public String getHero_name() {
         return hero_name;

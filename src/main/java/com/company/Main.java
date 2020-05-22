@@ -2,6 +2,9 @@ package com.company;
 
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -9,85 +12,117 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class Main extends Application {
+public class Main extends Application implements EventHandler<ActionEvent> {
 
-    Stage window;
-    CSVSaver saver;
+    Stage                 window;
+
+    CSVHandler csvHandler;
+
     ArrayList<Game_Entry> game_entries;
+
+    Button saveButton;
+    Button readButton;
+
+    public DataInputLayout dataInputLayout;
 
     public String[] heroes = new String[]{"Bangalore", "Bloodhound", "Caustic", "Crypto", "Gibraltar",
             "Lifeline", "Loba", "Mirage", "Octane", "Pathfinder", "Revenant", "Watson", "Wraith"};
 
     @Override
     public void start (Stage stage){
-        game_entries = new ArrayList <>();
-        saver = new CSVSaver();
-        window = new Stage();
+        csvHandler   = new CSVHandler();
+        game_entries = csvHandler.readFromCSV();
+        window       = new Stage();
 
+        //Data input layout
+        dataInputLayout = new DataInputLayout(10);
+        dataInputLayout.setPadding(new Insets(10,20,20,20));
 
-        DataInputLayout dataInputLayout = new DataInputLayout();
-        //Buttons
-        Button button = new Button("Save");
-        button.setOnAction(e ->{
+        //Save Button
+        saveButton = new Button("Save");
+        saveButton.setOnAction(this);
 
-                String hero_name = dataInputLayout.getHero_name_box().getValue();
-                try {
-                    int damage = Integer.parseInt(dataInputLayout.getDamage_field().getText());
-                    int kills = Integer.parseInt(dataInputLayout.getKills_field().getText());
-                    int position = Integer.parseInt(dataInputLayout.getPosition_field().getText());
-
-                    boolean anwser = ConfirmBox.display("New Entry", "Are you sure you want to add this entry?\n\tHero: " + hero_name + "\n\tDamage: " + damage +"\n\tKills: " + kills + "\n\tPosition: " + position);
-                    if(anwser) {
-                        game_entries.add(new Game_Entry(hero_name, damage, kills, position));
-
-                        dataInputLayout.getDamage_field().setText("");
-                        dataInputLayout.getKills_field().setText("");
-                        dataInputLayout.getPosition_field().setText("");
-                    }
-                    e.consume();
-                }catch(NumberFormatException exception){
-                    AlertBox.display("Wrong input", "Error: You entered a wrong value, which wasn't a number");
-                     e.consume();
-                }
-
-        });
-        StackPane pane = new StackPane();
-        pane.getChildren().add(button);
-
-
+        //Read Button
+        readButton = new Button("Read");
+        readButton.setOnAction(this);
 
         //Layout
+        HBox pane = new HBox(10);
+        pane.setPadding(new Insets(20,20,20,20));
+        pane.getChildren().addAll(saveButton, readButton);
+
         BorderPane border_layout = new BorderPane();
         border_layout.setBottom(pane);
         border_layout.setCenter(dataInputLayout);
 
-
+        //Window settings
         window.setOnCloseRequest(e ->{
             e.consume();
-            try {
-                closeProgram();
-            }
-            catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            closeProgram();
         });
 
-        Scene scene = new Scene(border_layout,900, 100);
+        Scene scene = new Scene(border_layout,800, 110);
         window.setScene(scene);
         window.show();
 
 
     }
 
-    private void closeProgram () throws IOException {
-        saver.WriteArrayToFile(game_entries, "C:\\Users\\Antoni\\Programming\\IdeaProjects\\ApexStats\\game_entries.csv");
+    //Handles button events
+    @Override
+    public void handle (ActionEvent actionEvent) {
+
+        if(actionEvent.getSource() == saveButton){
+            saveToArray(actionEvent);
+        }
+        if(actionEvent.getSource() == readButton){
+            readFromCSV();
+        }
+    }
+
+    private void saveToArray (ActionEvent actionEvent) {
+        String hero_name = dataInputLayout.getHero_name_box().getValue();
+        try {
+            int damage = Integer.parseInt(dataInputLayout.getDamage_field().getText());
+            int kills = Integer.parseInt(dataInputLayout.getKills_field().getText());
+            int position = Integer.parseInt(dataInputLayout.getPosition_field().getText());
+
+            boolean anwser = ConfirmBox.display("New Entry", "Are you sure you want to add this entry?\n\tHero: " + hero_name + "\n\tDamage: " + damage + "\n\tKills: " + kills + "\n\tPosition: " + position);
+            if (anwser) {
+                Game_Entry tmpGame_Entry = new Game_Entry(hero_name, damage, kills, position);
+                game_entries.add(tmpGame_Entry);
+
+                dataInputLayout.getDamage_field().setText("");
+                dataInputLayout.getKills_field().setText("");
+                dataInputLayout.getPosition_field().setText("");
+
+                csvHandler.writeToCSV(tmpGame_Entry, "game_entries.csv");
+            }
+            actionEvent.consume();
+        }
+        catch (NumberFormatException | IOException exception) {
+            AlertBox.display("Wrong input", "Error: You entered a wrong value, which wasn't a number");
+            actionEvent.consume();
+        }
+    }
+
+    private void readFromCSV(){
+        if(game_entries.isEmpty())
+            game_entries = csvHandler.readFromCSV();
+
+        for(Game_Entry g:game_entries){
+            System.out.println(g);
+        }
+
+    }
+
+    private void closeProgram (){
         window.close();
     }
 
@@ -113,8 +148,9 @@ public class Main extends Application {
             return position_field;
         }
 
-        public DataInputLayout (){
-
+        public DataInputLayout (int spacing){
+            super(spacing);
+            System.out.println("dataInput layout created");
             Label hero_name_label = new Label("Hero");
             hero_name_box = new ChoiceBox <>();
             addArray(hero_name_box, heroes);
