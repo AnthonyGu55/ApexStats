@@ -93,8 +93,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
             int kills = Integer.parseInt(dataInputLayout.getKills_field().getText());
             int position = Integer.parseInt(dataInputLayout.getPosition_field().getText());
 
-            boolean anwser = ConfirmBox.display("New Entry", "Are you sure you want to add this entry?\n\tHero: " + hero_name + "\n\tDamage: " + damage + "\n\tKills: " + kills + "\n\tPosition: " + position);
-            if (anwser) {
+            boolean answer = ConfirmBox.display("New Entry", "Are you sure you want to add this entry?\n\tHero: " + hero_name + "\n\tDamage: " + damage + "\n\tKills: " + kills + "\n\tPosition: " + position);
+            if (answer) {
                 Game_Entry tmpGame_Entry = new Game_Entry(hero_name, damage, kills, position);
                 game_entries.add(tmpGame_Entry);
 
